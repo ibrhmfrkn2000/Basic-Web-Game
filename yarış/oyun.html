@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style> #cnvs{ display: block; margin: 0 auto; } </style>
+    <title>game</title>
+</head>
+<body>
+    <form>
+        <canvas id="cnvs" width="350" height="480"></canvas>
+    </form>
+    <div id="skorDiv" style="position: absolute; top: 10px; right: 39%; color: rgb(0, 0, 0); font-size: 20px;"></div>
+    <script>
+        const canvas = document.getElementById('cnvs');
+        const context = canvas.getContext('2d');
+        const yol = new Image();
+        yol.src = 'yol.jpg';
+        const agac = new Image()
+        agac.src = 'agac.png';
+        const agac1 = new Image();
+        agac1.src = 'agac1.png';
+        const araba = new Image();
+        araba.src='araba.png';
+        let engel = new Image();
+        engel.onload = function(){
+           context.drawImage(engel, engelx, engely, engelgenislik , engelyukseklik);
+        }
+        engel.src='engel.png'; 
+        const engelgenislik = 60;
+        const engelyukseklik = 60;
+        const arabagenislik = 40;
+        const arabayukseklik = 50;
+        const agacgenislik = 133;
+        const agacyukseklik = 180;
+        const agac1genislik = 100;
+        const agac1yukseklik = 100;
+        var skor = 0;
+        var speed = 2;
+        var arabaspeed = 120;
+        var agacx = 0;
+        var agacy = 0;
+        var agac1x = 235;
+        var agac1y = 0;
+        var engelx = 134;
+        var engely = 0;
+        let arabax = 134;
+        let arabay = 400;
+
+        var keysDown = {};
+
+        addEventListener("keydown", function (e) {
+            keysDown[e.keyCode] = true;
+        }, false);
+
+        addEventListener("keyup", function (e) {
+            delete keysDown[e.keyCode];
+        }, false);
+
+        function carpismaKontrolu() {
+            var arabaf = arabay + arabayukseklik; 
+            var arabal = arabax - (arabagenislik / 2);
+            var arabar = arabax + (arabagenislik / 2); 
+
+            var engelb = engely + engelyukseklik;
+            var engelL = engelx - (engelgenislik / 2);
+            var engelr = engelx + (engelgenislik / 3);
+
+
+            if (arabaf >= engely && arabal <= engelr && arabar >= engelx && arabay <= engelb) {
+                window.alert("Kaybettin!");
+                return true; 
+            }
+
+            return false;
+        }
+
+        function oyunDongusu() {
+            const now = Date.now();
+            const delta = now - then;
+            const modifier = delta / 1000;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(yol, 0, 0);
+            context.drawImage(araba, arabax, arabay, arabagenislik, arabayukseklik);
+            context.drawImage(engel, engelx, engely, engelgenislik, engelyukseklik);
+            context.drawImage(agac, agacx, agacy, agacgenislik, agacyukseklik);
+            context.drawImage(agac1, agac1x, agac1y, agac1genislik, agac1yukseklik);
+
+            agac1y += 5;
+            agacy += 7;
+            engely += speed;
+            if (skor <= 5) { speed = 2 }
+            if (skor == 10) { speed = 3 }
+            if (skor == 15) { speed = 4 }
+            if (skor == 20) { speed = 5 }
+            if (skor == 25) { speed = 6 }
+
+            if (agacy > 450) { agacy = 0; agacx = 0 }
+            if (agac1y > 450) { agac1y = 0; agac1x = Math.random() * 238 + 235 }
+            if (engely > 500) {
+                engely = 0;
+                engelx = Math.random() * 53 + 134;
+                skor = skor + 1;
+                var skorDiv = document.getElementById("skorDiv");
+                skorDiv.innerText = "Skor: " + skor;
+            }
+
+            if (carpismaKontrolu()) {
+                return;
+            }
+
+            then = now;
+
+            if (37 in keysDown) { 
+                arabax -= arabaspeed * modifier;
+            }
+            if (39 in keysDown) { 
+                arabax += arabaspeed * modifier;
+            }
+
+            if(arabax<120||arabax>200){
+                window.alert("kaybettin");
+                return;
+            }
+
+            requestAnimationFrame(oyunDongusu);
+        }
+
+        var then = Date.now();
+        oyunDongusu();
+
+    </script>
+
+</body>
+</html>
